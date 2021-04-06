@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys, os, argparse
-sys.setrecursionlimit(3000)
+sys.setrecursionlimit(2000)
 
 from tqdm import tqdm
 from bs4 import BeautifulSoup, SoupStrainer
