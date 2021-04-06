@@ -3,10 +3,18 @@ A simple Python script to generate a deck of Anki cards from a Kindle vocabulary
 
 # Installation
 First, Python is required. If not sure, just download [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and install it.
-Then, open a terminal and install the required libraries and clone the KindleUnpack repository:
+Then, open a terminal and install the required libraries, clone this repository, and the [KindleUnpack](https://github.com/kevinhendricks/KindleUnpack) repository:
 ```bash
-pip install git lxml tqdm fuzzywuzzy beautifulsoup4
+conda install python==3.7 git
+pip install html5lib lxml tqdm fuzzywuzzy[speedup] beautifulsoup4
+git clone https://github.com/OscarPellicer/anki-toolkit.git
 git clone https://github.com/kevinhendricks/KindleUnpack.git
+```
+
+We will navigate to the directory where anki-toolkit was created:
+```bash
+#We assume that it was git-cloned into the user path (~)
+cd anki-toolkit
 ```
 
 # Preparing a dictionary
@@ -14,25 +22,26 @@ Anki Toolkit uses ebook dictionaries to provide the definition / translations fo
 For example, we can translate english words into spanish using the openly available **WordNet 3 Infused ES** dictionary.
 If you want to use a DRM-protected dictionary (e.g. a dictionary you bought from Amazon), you will need to de-DRM it first. Please look at [Using protected dictionaries](#using-protected-dictionaries)
 
-First, we need to download the dictionary, by going to the [website](http://eb.lv) and downloading [WordNet3 Infused ES](http://eb.lv/downloads/wn3infes.mobi).
+First, we need to download the dictionary, by going to the [website](http://eb.lv) and downloading **WordNet3 Infused ES**. 
 
-Then, we transform the downloaded `wn3infes.mobi` dictionary to `.html` using Kindle Unpack:
+Then, we transform the downloaded `wn3infes.mobi` dictionary to `.html` using [KindleUnpack](https://github.com/kevinhendricks/KindleUnpack):
 ```bash
-#We assume that it was git-cloned into the user path (~)
-python ~/KindleUnpack/kindleunpack.py wn3infes.mobi wordnet3es
+#Replace the path to KindleUnpack if it was cloned elsewhere
+#Also, replace the dictionary path to wherever it was downloaded
+python ../KindleUnpack/lib/kindleunpack.py wn3infes.mobi wordnet3es
 ```
 
 # Usage
 ## Basic usage
-Once we have a dictionary available, we can directly use to create Anki cards.
+Once we have a dictionary available, we can directly use it to create Anki cards.
 
 ```bash
-python ankitk.py -v some translateable words -d wordnet3es/book.html -o test.html
+python ankitk.py -v some translateable words -d wordnet3es/mobi7/book.html -o test.html
 ```
 
 The first time that an HTML dictionary is used, it will be automatically converted to .tsv for further processing. This might take a while, but must only be done once.
 
-Also, notice that the word `translateable` was misspelled, yet, the correct spelling `translatable` was found. By default, if no exact match is found for a word, fuzzy matching is performed. This can be tweaked or disabled by setting the parameter `--fuzzy_match_score`. By default it has a value of 82 (the score of the fuzzy-matched word must be at least 82); setting it to 0 or a negative value disables it. For instance: `python ankitk.py -v some translateable words -d wordnet3es/book.html -o test.html -f 0` will disregard the misspelled word
+Also, notice that the word `translateable` was misspelled, yet, the correct spelling `translatable` was found. By default, if no exact match is found for a word, fuzzy matching is performed. This can be tweaked or disabled by setting the parameter `--fuzzy_match_score`. By default it has a value of 82: the score of the fuzzy-matched word must be at least 82. Setting it to 0 or a negative value disables it. For instance: `python ankitk.py -v some translateable words -d wordnet3es/book.html -o test.html -f 0` will disregard the misspelled word
 
 Once it has finished, the resulting `test.html` file can be opened with an internet browser for quick visualization, or imported from Anki, by clicking `File > Import`. In the import options, make sure that your desired destination Deck is selected, that `fields are separated by Tab`, and that `Allow HTML in fields` is checked. Then click import, and that's it!
 
