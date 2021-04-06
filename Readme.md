@@ -1,5 +1,5 @@
 # Anki Toolkit
-A simple Python script to generate a deck of Anki cards from a Kindle vocabulary database or a list of words.
+A simple Python script to generate a deck of Anki cards from a Kindle vocabulary database or a list of words using an ebook dictionary.
 
 # Installation
 First, Python is required. If not sure, just download [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and install it.
@@ -11,9 +11,8 @@ git clone https://github.com/OscarPellicer/anki-toolkit.git
 git clone https://github.com/kevinhendricks/KindleUnpack.git
 ```
 
-We will navigate to the directory where anki-toolkit was created:
+We will navigate to the directory where anki-toolkit was cloned:
 ```bash
-#We assume that it was git-cloned into the user path (~)
 cd anki-toolkit
 ```
 
@@ -39,7 +38,7 @@ Once we have a dictionary available, we can directly use it to create Anki cards
 python ankitk.py -v some translateable words -d wordnet3es/mobi7/book.html -o test.html
 ```
 
-The first time that an HTML dictionary is used, it will be automatically converted to .tsv for further processing. This might take a while, but must only be done once.
+The first time that an HTML dictionary is used, it will be automatically converted to .tsv for further processing. This might take a while, but must only be done once. If this process fails (often it exits with no error, but the progress bar is incomplete), try specifying a different encoding by adding `-e utf-8` or `-e windows-1252` to the command line. You might also be running out of memory, which might be fixed by reducing the Python recusion limit in line 4 of `ankitk.py`.
 
 Also, notice that the word `translateable` was misspelled, yet, the correct spelling `translatable` was found. By default, if no exact match is found for a word, fuzzy matching is performed. This can be tweaked or disabled by setting the parameter `--fuzzy_match_score`. By default it has a value of 82: the score of the fuzzy-matched word must be at least 82. Setting it to 0 or a negative value disables it. For instance: `python ankitk.py -v some translateable words -d wordnet3es/book.html -o test.html -f 0` will disregard the misspelled word
 
@@ -51,18 +50,18 @@ To process a Kindle vocabulary database (`vocab.db`) the procedure is the same. 
 Then, the syntax is identical:
 
 ```bash
-python ankitk.py -v vocab.db -d wordnet3es/book.html -o test.html -s 2018-20-04
+python ankitk.py -v vocab.db -d wordnet3es/book.html -o test.html -s 2020-04-20
 ```
 
-Notice that an optional parameter was used `-s 2018-20-04` to only include the words added since a given date. If omitted, all words in `vocab.db` are read.
+Notice that an optional parameter was used `-s 2020-04-20` to only include the words added since a given date. If omitted, all words in `vocab.db` are read.
 
 ## Other options
-- Besides the previous use cases, the input vocabulary can also be new-line-separated list of words in a file. E.g. `-v words.txt`.
+- Besides the previous use cases, the input vocabulary can also be a new-line-separated list of words in a file. E.g. `-v words.txt`.
 - The encoding for the dictionary and the vocabulary can be manually specified, in case Python does not figure it out by itself. E.g. `-e utf-8`, or `-e windows-1252`.
 - If you want your dictionary to only contain plain text (no HTML tags): `-t False`.
 
 # Using protected dictionaries
-When using an Amazon-bought dictionary, it must be first de-DRMd, otherwise it is encrypted cannot be used:
+When using an Amazon-bought dictionary, it must first be de-DRMd, otherwise it is encrypted and cannot be used:
 
 1. Download the Calibre de-DRM plugin: https://github.com/apprenticeharper/DeDRM_tools/releases
 1. Note the highest Calibre version supported by the plugin, and download and install that Calibre version: https://calibre-ebook.com/download

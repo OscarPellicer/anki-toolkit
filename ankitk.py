@@ -105,51 +105,54 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
     notes = []
     # vocab is a list of db rows order by (stem, timestamp)
     for i, (stem, entries) in enumerate(iterable):
-        # Merge multiple usages into one.
-        usage_all = ''
-        usage_timestamp = None
-        for entry in entries:
-            word = entry['word']
-            if word is None:
-                _usage = entry['usage'].strip()
-            else:
-                _usage = entry['usage'].replace(word, f'<strong>{word}</strong>').strip()
-            usage = f'{_usage}<small> <i>{entry["title"]}</i></small><br>'
-            usage_all += usage
-            usage_timestamp = entry['timestamp']
-
-        # Look up definition in dictionary
         try:
-            definition = dict_db(stem).strip()
-            if remove_hyperlinks:
-                definition= definition.replace('<a', '<span').replace('</a', '</span')
-        except KeyError:
-            #Attempt to fuzzy find the word
-            print(' - %s '%stem, end='')
-            if fuzzy_match_score > 0:
-                from fuzzywuzzy import process, fuzz
-                key, score= process.extractOne(stem, keys, scorer=fuzz.UQRatio)
-            else:
-                key, score= '-', -100
-            if score > fuzzy_match_score:
-                print('> %s'%key)
-                definition = dict_db(key).strip()
+            # Merge multiple usages into one.
+            usage_all = ''
+            usage_timestamp = None
+            for entry in entries:
+                word = entry['word']
+                if word is None:
+                    _usage = entry['usage'].strip()
+                else:
+                    _usage = entry['usage'].replace(word, f'<strong>{word}</strong>').strip()
+                usage = f'{_usage}<small> <i>{entry["title"]}</i></small><br>'
+                usage_all += usage
+                usage_timestamp = entry['timestamp']
+
+            # Look up definition in dictionary
+            try:
+                definition = dict_db(stem).strip()
                 if remove_hyperlinks:
                     definition= definition.replace('<a', '<span').replace('</a', '</span')
-            else:
-                #Otherwise, error
+            except KeyError:
+                #Attempt to fuzzy find the word
+                print(' - %s '%stem, end='')
                 if fuzzy_match_score > 0:
-                    print('> ?? (Closest: %s, score: %d)'%(key, score))
+                    from fuzzywuzzy import process, fuzz
+                    key, score= process.extractOne(stem, keys, scorer=fuzz.UQRatio)
                 else:
-                    print('')
-                stems_no_def.add((i, stem))
-                if include_nodef:
-                    definition = None
+                    key, score= '-', -100
+                if score > fuzzy_match_score:
+                    print('> %s'%key)
+                    definition = dict_db(key).strip()
+                    if remove_hyperlinks:
+                        definition= definition.replace('<a', '<span').replace('</a', '</span')
                 else:
-                    continue
-
-        note = AnkiNote(stem, usage_all, definition, usage_timestamp)
-        notes.append(note)
+                    #Otherwise, error
+                    if fuzzy_match_score > 0:
+                        print('> ?? (Closest: %s, score: %d)'%(key, score))
+                    else:
+                        print('')
+                    stems_no_def.add((i, stem))
+                    if include_nodef:
+                        definition = None
+                    else:
+                        continue
+                        
+            note = AnkiNote(stem, usage_all, definition, usage_timestamp)
+            notes.append(note)
+        except Exception as e:
+            print('Exception:', e)
         
     print('Out of all words: %d could be found in the dictionary, and %d could not'%(
             len(notes), len(stems_no_def)))
@@ -211,7 +214,7 @@ if __name__ == '__main__':
     
     #Do we need to read the vocabulary from a text file?
     if args.vocabulary[0].endswith('txt'):
-        vacabulary= [line.strip() for line in open(args.vocabulary[0], encoding=args.encoding)]
+        vocabulary= [line.strip() for line in open(args.vocabulary[0], encoding=args.encoding)]
     elif args.vocabulary[0].endswith('db'):
         vocabulary= get_vocab(vocab_db=args.vocabulary[0], since=args.since)
     else:
