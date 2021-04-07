@@ -60,7 +60,7 @@ python ankitk.py -v vocab.db -d wordnet3es/mobi7/book.html -o test.html -s 2020-
 Notice that an optional parameter was used `-s 2020-04-20` to only include the words added since a given date. If omitted, all words in `vocab.db` are read.
 
 ## Other options
-- Besides the previous use cases, the input vocabulary can also be a new-line-separated list of words in a file. E.g. `-v words.txt`. If a .txt file is provided, additional information can be added for each word after a Tab. This information (typically the sentence where the word appears, or a custom definition) will appear at the back of the Anki card.
+- Besides the previous use cases, the input vocabulary can also be a new-line-separated list of words in a file. E.g. `-v words.txt`. If a .txt file is provided, additional information can be added for each word after a Tab. This information (typically the sentence where the word appears, or a custom definition) will appear at the back of the Anki card. If special symbols are not being read properly, try changing the encoding, as explained in the next line.
 - The encoding for the dictionary and the vocabulary can be manually specified, in case Python does not figure it out by itself. E.g. `-e utf-8`, or `-e windows-1252`.
 - If you want your dictionary to only contain plain text (no HTML tags): `-t False`.
 
