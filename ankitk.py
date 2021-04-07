@@ -95,11 +95,13 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
         dict_db= dictionary
         keys= None
         
-    #Vocab can either be a list of words, or a list of sqlite3 rows
+    #Vocab can either be a list of tuples (word, extra_info), or a list of sqlite3 rows
     if len(vocab) > 0 and isinstance(vocab[0], sqlite3.Row):
         iterable= itertools.groupby(vocab, itemgetter('stem'))
     else:
-        iterable= zip(vocab, [[] for _ in vocab])
+        iterable= [ ( word, ([{'usage':extra_info, 'title':'', 'timestamp':None, 'word':None}]
+                         if extra_info is not None else []) )
+                             for word, extra_info in vocab]
 
     stems_no_def = set()
     notes = []
@@ -143,10 +145,12 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
                         print('> ?? (Closest: %s, score: %d)'%(key, score))
                     else:
                         print('')
-                    stems_no_def.add((i, stem))
-                    if include_nodef:
-                        definition = None
+                        
+                    #Include or ignore
+                    if include_nodef or usage_all!='':
+                        definition = ''
                     else:
+                        stems_no_def.add((i, stem))
                         continue
                         
             note = AnkiNote(stem, usage_all, definition, usage_timestamp)
@@ -154,7 +158,7 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
         except Exception as e:
             print('Exception:', e)
         
-    print('Out of all words: %d could be found in the dictionary, and %d could not'%(
+    print('Out of all words: %d could be found in the dictionary (or contained extra info), and %d could not'%(
             len(notes), len(stems_no_def)))
 
     return notes, stems_no_def
@@ -176,7 +180,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--vocabulary', type=str,  default=None, nargs='+',
                         help='Input vocabulary: either a Kindle database (e.g. vocab.db), a simple text file with '+\
-                        'a different word in each line (e.g. vocab.txt), or a space-separated list of words (e.g. water melon)')
+                        'a different word in each line (e.g. vocab.txt), or a space-separated list of words (e.g. water melon).'+\
+                        'If a .txt file is provided, additional information can be added for each word after a Tab.')
     
     parser.add_argument('-d','--dictionary', type=str, default=None,
                         help='Input dictionary: Can be a tab-separated dictionary (e.g. dictionary.tsv), or an HTML '+\
@@ -214,7 +219,8 @@ if __name__ == '__main__':
     
     #Do we need to read the vocabulary from a text file?
     if args.vocabulary[0].endswith('txt'):
-        vocabulary= [line.strip() for line in open(args.vocabulary[0], encoding=args.encoding)]
+        vocabulary= [ ( line.strip().split('\t', maxsplit=1) if '\t' in line else (line.strip(), None) )
+                         for line in open(args.vocabulary[0], encoding=args.encoding)]
     elif args.vocabulary[0].endswith('db'):
         vocabulary= get_vocab(vocab_db=args.vocabulary[0], since=args.since)
     else:

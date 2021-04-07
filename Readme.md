@@ -1,5 +1,9 @@
 # Anki Toolkit
-A simple Python script to generate a deck of Anki cards from a Kindle vocabulary database or a list of words using an ebook dictionary.
+A simple Python script to generate a deck of Anki cards from a Kindle vocabulary database or a list of words using an ebook dictionary. Features:
+- Accepts as input a Kindle vocabulary database (`vocab.db`), a text file with new-line-separated words (`vocab.txt`) with optional additional information (see [Other options](#other-options)), or just a list of words.
+- Produces a set of cards that can easily be imported into an Anki deck.
+- Fuzzy dictionary search: If the word is misspelled, or does not exist, it will search for similar words in the dictionary (this behavour can be tweaked or disabled).
+- Uses ebook dictionaries for the definitions, such as those bought from Amazon (see [Using protected dictionaries](#using-protected-dictionaries)).
 
 # Installation
 First, Python is required. If not sure, just download [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and install it.
@@ -56,7 +60,7 @@ python ankitk.py -v vocab.db -d wordnet3es/mobi7/book.html -o test.html -s 2020-
 Notice that an optional parameter was used `-s 2020-04-20` to only include the words added since a given date. If omitted, all words in `vocab.db` are read.
 
 ## Other options
-- Besides the previous use cases, the input vocabulary can also be a new-line-separated list of words in a file. E.g. `-v words.txt`.
+- Besides the previous use cases, the input vocabulary can also be a new-line-separated list of words in a file. E.g. `-v words.txt`. If a .txt file is provided, additional information can be added for each word after a Tab. This information (typically the sentence where the word appears, or a custom definition) will appear at the back of the Anki card.
 - The encoding for the dictionary and the vocabulary can be manually specified, in case Python does not figure it out by itself. E.g. `-e utf-8`, or `-e windows-1252`.
 - If you want your dictionary to only contain plain text (no HTML tags): `-t False`.
 
