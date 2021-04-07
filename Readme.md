@@ -5,6 +5,9 @@ A simple Python script to generate a deck of Anki cards from a Kindle vocabulary
 - Fuzzy dictionary search: If the word is misspelled, or does not exist, it will search for similar words in the dictionary (this behavour can be tweaked or disabled).
 - Uses ebook dictionaries for the definitions, such as those bought from Amazon (see [Using protected dictionaries](#using-protected-dictionaries)).
 
+Here is a sample of an Anki card that was generated from a Kindle vocabulary file using this script (viewed in [AnkiDroid](https://play.google.com/store/apps/details?id=com.ichi2.anki) with dark theme):
+![Sample card](sample.jpg "Sample card")
+
 # Installation
 First, Python is required. If not sure, just download [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and install it.
 Then, open a terminal and install the required libraries, clone this repository, and the [KindleUnpack](https://github.com/kevinhendricks/KindleUnpack) repository:
