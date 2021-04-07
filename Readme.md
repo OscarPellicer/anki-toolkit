@@ -50,7 +50,7 @@ To process a Kindle vocabulary database (`vocab.db`) the procedure is the same. 
 Then, the syntax is identical:
 
 ```bash
-python ankitk.py -v vocab.db -d wordnet3es/book.html -o test.html -s 2020-04-20
+python ankitk.py -v vocab.db -d wordnet3es/mobi7/book.html -o test.html -s 2020-04-20
 ```
 
 Notice that an optional parameter was used `-s 2020-04-20` to only include the words added since a given date. If omitted, all words in `vocab.db` are read.
