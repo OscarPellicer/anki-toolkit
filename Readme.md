@@ -6,7 +6,7 @@ A simple Python script to generate a deck of Anki cards from a Kindle vocabulary
 - Uses ebook dictionaries for the definitions, such as those bought from Amazon (see [Using protected dictionaries](#using-protected-dictionaries)).
 
 Here is a sample of an Anki card that was generated from a Kindle vocabulary file using this script (viewed in [AnkiDroid](https://play.google.com/store/apps/details?id=com.ichi2.anki) with dark theme):
-![Sample card](sample.jpg "Sample card")
+<img src="https://github.com/OscarPellicer/anki-toolkit/blob/main/sample.jpg" width="400px" align="center">
 
 # Installation
 First, Python is required. If not sure, just download [Miniconda](https://docs.conda.io/en/latest/miniconda.html) and install it.
