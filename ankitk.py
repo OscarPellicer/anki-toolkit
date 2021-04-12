@@ -84,10 +84,18 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
     print('Generating Anki notes. Any words not that were not found will appear hereafter:')
     #Load dictionary
     if isinstance(dictionary, str):
+    #We read the tsv into a dictionary. Note that words might have multiple definitions,
+    #hence, if a key already exists, we just append the following definitions.
+        dictionary2= {}
         with open(dictionary, 'r', encoding='utf-8') as f:
-            dictionary = dict(line.split('\t') for line in f.readlines())
-        dict_db= dict_to_fn(dictionary)
-        keys= list(dictionary.keys())
+            for line in f.readlines():
+                word, definition= line.split('\t')
+                if word in dictionary2.keys():
+                    dictionary2[word]= dictionary2[word].replace('\n', '<br>') + definition
+                else:
+                    dictionary2[word]= definition
+        dict_db= dict_to_fn(dictionary2)
+        keys= list(dictionary2.keys())
     elif isinstance(dictionary, dict):
         dict_db= dict_to_fn(dictionary)
         keys= list(dictionary.keys())
