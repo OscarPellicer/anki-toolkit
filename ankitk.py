@@ -81,7 +81,7 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
         remove_hyperlinks: remove hyperlinks from ouput html
         fuzzy_match_score: score above which words not found in the index will be automatically matched and fixed
     '''
-    print('Generating Anki notes. Any words not that were not found will appear hereafter:')
+    print('Generating Anki notes. Any words that were not found will appear hereafter:')
     #Load dictionary
     if isinstance(dictionary, str):
     #We read the tsv into a dictionary. Note that words might have multiple definitions,
@@ -107,9 +107,9 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
     if len(vocab) > 0 and isinstance(vocab[0], sqlite3.Row):
         iterable= itertools.groupby(vocab, itemgetter('stem'))
     else:
-        iterable= [ ( word, ([{'usage':extra_info, 'title':'', 'timestamp':None, 'word':None}]
-                         if extra_info is not None else []) )
-                             for word, extra_info in vocab]
+        iterable= [ ( word, [{'usage':str(*extra_info), 'title':'', 'timestamp':None, 'word':None}]
+                             if len(extra_info) and extra_info[0] is not None else [])
+                             for word, *extra_info in vocab]
 
     stems_no_def = set()
     notes = []
@@ -177,7 +177,7 @@ def output_anki_tsv(notes, output, sort=True):
 
     with open(output, 'w', encoding='utf-8') as f:
         for note in notes:
-            line = f'{note.word}\t{note.definition}<hr>{note.usage}\n'
+            line = f'{note.word}\t{note.definition}<hr>{note.usage}<br><br>\n'
             f.write(line)
             
     print('Exported as:', output)
