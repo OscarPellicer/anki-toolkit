@@ -14,7 +14,7 @@ First, Python is required. If not sure, just download [Miniconda](https://docs.c
 Then, open a terminal and install the required libraries, clone this repository, and the [KindleUnpack](https://github.com/kevinhendricks/KindleUnpack) repository:
 ```bash
 conda install python==3.7 git
-pip install html5lib lxml tqdm fuzzywuzzy[speedup] beautifulsoup4
+pip install html5lib lxml tqdm fuzzywuzzy beautifulsoup4
 git clone https://github.com/OscarPellicer/anki-toolkit.git
 git clone https://github.com/kevinhendricks/KindleUnpack.git
 ```
