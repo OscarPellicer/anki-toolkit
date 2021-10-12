@@ -68,6 +68,7 @@ Notice that an optional parameter was used `-s 2020-04-20` to only include the w
 - To change the separator (only applies if reading the vocabulary from a .txt file) to use for instance `=`, use: `-p "="`. By default it is a Tab: `-p "\t"`
 - The encoding for the dictionary and the vocabulary can be manually specified, in case Python does not figure it out by itself. E.g. `-e utf-8`, or `-e windows-1252`.
 - If you want your dictionary to only contain plain text (no HTML tags): `-t False`.
+- You can reverse the cards, so that only the usage part of the card appears at the fron, and the actual word and definition appear at the back, by using: `-r True`
 
 # Using protected dictionaries
 When using an Amazon-bought dictionary, it must first be de-DRMd, otherwise it is encrypted and cannot be used:
