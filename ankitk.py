@@ -186,15 +186,18 @@ if __name__ == '__main__':
     
     #Parser setup
     parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--vocabulary', type=str,  default=None, nargs='+',
+    parser.add_argument('-v', '--vocabulary', type=str,  default=None, nargs='+', required=True,
                         help='Input vocabulary: either a Kindle database (e.g. vocab.db), a simple text file with '+\
                         'a different word in each line (e.g. vocab.txt), or a space-separated list of words (e.g. water melon).'+\
-                        'If a .txt file is provided, additional information can be added for each word after a Tab.')
+                        'If a .txt file is provided, additional information can be added after each word using a separator (default: tab).')
     
-    parser.add_argument('-d','--dictionary', type=str, default=None,
+    parser.add_argument('-d','--dictionary', type=str, default=None, required=True,
                         help='Input dictionary: Can be a tab-separated dictionary (e.g. dictionary.tsv), or an HTML '+\
                         'dictionary ebook, which will be converted to .tsv first (e.g. wordnet3/book.html). Once converted for'+\
                         'the first time, please use the converted .tsv dictionary')
+        
+    parser.add_argument('-o', '--output', type=str, default=None, required=True,
+                        help='Output file: Name of the output file (e.g. anki_export.tsv, or anki_export.html)')
     
     parser.add_argument('-e','--encoding', type=str, default=None,
                         help='Dictionary/Vocabulary encoding: utf-8, windows-1252, etc. By default, python will try to guess it')
@@ -210,9 +213,9 @@ if __name__ == '__main__':
                         help='Fuzzy match score: If a key is not found in the dictionary, it will be looked up using fuzzy'+\
                         ' string matching. The highest scoring match, with a score of at least FUZZY_MATCH_SCORE will be '+\
                         'looked up instead. Set to 0 or a negative value to disable fuzzy matching. Default 82')
-    
-    parser.add_argument('-o', '--output', type=str, default=None,
-                        help='Output file: Name of the output file (e.g. anki_export.tsv, or anki_export.html)')
+                        
+    parser.add_argument('-p', '--separator', type=str, default='\t',
+                        help='Separator to use if a .txt is provided as vocabulary (e.g. \\t, =, -, :)')
 
     args = parser.parse_args()
     
@@ -227,7 +230,7 @@ if __name__ == '__main__':
     
     #Do we need to read the vocabulary from a text file?
     if args.vocabulary[0].endswith('txt'):
-        vocabulary= [ ( line.strip().split('\t', maxsplit=1) if '\t' in line else (line.strip(), None) )
+        vocabulary= [ ( line.strip().split(args.separator, maxsplit=1) if args.separator in line else (line.strip(), None) )
                          for line in open(args.vocabulary[0], encoding=args.encoding)]
     elif args.vocabulary[0].endswith('db'):
         vocabulary= get_vocab(vocab_db=args.vocabulary[0], since=args.since)
@@ -238,4 +241,3 @@ if __name__ == '__main__':
     #Create output
     notes, _ = make_notes(vocabulary, dictionary, fuzzy_match_score=args.fuzzy_match_score)
     output_anki_tsv(notes, output=args.output)
-    
