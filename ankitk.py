@@ -171,13 +171,16 @@ def make_notes(vocab, dictionary, include_nodef=False, remove_hyperlinks=True,
 
     return notes, stems_no_def
 
-def output_anki_tsv(notes, output, sort=True):
+def output_anki_tsv(notes, output, sort=True, reverse=False):
     if sort and len(notes) > 0 and notes[0].timestamp is not None:
         notes.sort(key=attrgetter('timestamp'), reverse=True)
 
     with open(output, 'w', encoding='utf-8') as f:
         for note in notes:
-            line = f'{note.word}\t{note.definition}<hr>{note.usage}<br><br>\n'
+            if reverse:
+                line = f'{note.usage}\t{note.word}<hr>{note.definition}<br><br>\n'
+            else:
+                line = f'{note.word}\t{note.definition}<hr>{note.usage}<br><br>\n'
             f.write(line)
             
     print('Exported as:', output)
@@ -216,6 +219,9 @@ if __name__ == '__main__':
                         
     parser.add_argument('-p', '--separator', type=str, default='\t',
                         help='Separator to use if a .txt is provided as vocabulary (e.g. \\t, =, -, :)')
+                        
+    parser.add_argument('-r', '--reverse', type=bool, default=False,
+                        help='Reverse front and back of the card')
 
     args = parser.parse_args()
     
@@ -240,4 +246,4 @@ if __name__ == '__main__':
         
     #Create output
     notes, _ = make_notes(vocabulary, dictionary, fuzzy_match_score=args.fuzzy_match_score)
-    output_anki_tsv(notes, output=args.output)
+    output_anki_tsv(notes, output=args.output, reverse=args.reverse)
